@@ -26,9 +26,17 @@ public sealed class AudioJuegoNuevo : MonoBehaviour
     {
         int rate = 22050, n = Mathf.CeilToInt(rate * segundos); var samples = new float[n];
         for (int i=0;i<n;i++) { float t=(float)i/rate; float wave;
-            if (melodia) { int paso=(int)(t*2)%8; float[] notas={261.63f,329.63f,392f,329.63f,293.66f,349.23f,440f,349.23f}; float f=notas[paso]; wave=(Mathf.Sin(2*Mathf.PI*f*t)+.3f*Mathf.Sin(4*Mathf.PI*f*t))*.5f; }
+            if (melodia)
+            {
+                int paso=(int)(t*2)%8;float[] notas={261.63f,329.63f,392f,329.63f,293.66f,349.23f,440f,349.23f};
+                float f=notas[paso];float baseMusical=Mathf.Sin(2*Mathf.PI*f*t);
+                float armonico=Mathf.Sin(4*Mathf.PI*f*t)*.24f;
+                float acompanamiento=Mathf.Sin(2*Mathf.PI*(f*.5f)*t)*.18f;
+                wave=(baseMusical+armonico+acompanamiento)*.5f;
+            }
             else { float f=hzFinal>0?Mathf.Lerp(hz,hzFinal,t/segundos):hz; float golpe=Mathf.Sin(2*Mathf.PI*f*t); wave=(golpe+.16f*Mathf.Sin(4*Mathf.PI*f*t))*Mathf.Exp(-t*11f); }
-            samples[i]=wave*amplitud*(melodia?1f:1f);
+            float borde=melodia?Mathf.Clamp01(Mathf.Min(t,segundos-t)*16f):1f;
+            samples[i]=wave*amplitud*borde;
         }
         var clip=AudioClip.Create(nombre,n,1,rate,false); clip.SetData(samples,0); return clip;
     }
