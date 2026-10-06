@@ -24,12 +24,12 @@ public sealed class JugadorNuevo : MonoBehaviour
     void OnCollisionStay2D(Collision2D c){if(c.contacts.Length>0&&c.contacts[0].normal.y>.55f)tiempoSuelo=.12f;}
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.GetComponent<NectarNuevo>()!=null){other.gameObject.SetActive(false);EstadoPartidaNuevo.Recoger();return;}
+        if(other.GetComponent<NectarNuevo>()!=null){EfectosVisualesNuevo.Destello(other.transform.position,new Color(1f,.76f,.12f));other.gameObject.SetActive(false);EstadoPartidaNuevo.Recoger();return;}
         if(other.GetComponent<EnemigoNuevo>()!=null)
         {
             bool pisando=rb.linearVelocity.y<-.2f && transform.position.y>other.bounds.center.y+.25f;
-            if(pisando){other.gameObject.SetActive(false);EstadoPartidaNuevo.DerrotarEnemigo();rb.linearVelocity=new Vector2(rb.linearVelocity.x,7f);tiempoSuelo=0;}
-            else if(!invulnerable){if(EstadoPartidaNuevo.Herir())StartCoroutine(Parpadeo());rb.linearVelocity=new Vector2(-Mathf.Sign(other.transform.position.x-transform.position.x)*7f,7f);}
+            if(pisando){EfectosVisualesNuevo.Destello(other.transform.position,new Color(1f,.35f,.2f),16);other.gameObject.SetActive(false);EstadoPartidaNuevo.DerrotarEnemigo();rb.linearVelocity=new Vector2(rb.linearVelocity.x,7f);tiempoSuelo=0;}
+            else if(!invulnerable){EfectosVisualesNuevo.Destello(transform.position,new Color(1f,.27f,.2f),10);if(EstadoPartidaNuevo.Herir())StartCoroutine(Parpadeo());rb.linearVelocity=new Vector2(-Mathf.Sign(other.transform.position.x-transform.position.x)*7f,7f);}
         }
         if(other.GetComponent<MetaNuevo>()!=null&&EstadoPartidaNuevo.Nectar>=EstadoPartidaNuevo.TotalNectar)EstadoPartidaNuevo.Ganar();
     }
