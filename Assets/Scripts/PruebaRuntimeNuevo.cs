@@ -45,11 +45,14 @@ public sealed class PruebaRuntimeNuevo:MonoBehaviour
             jugador.transform.position=new Vector3(enemigos[0].transform.position.x-.7f,enemigos[0].transform.position.y,0);rb.linearVelocity=Vector2.zero;
             jugador.SendMessage("OnTriggerEnter2D",golpe);
             if(EstadoPartidaNuevo.Vidas!=2)Fallar("la colisión lateral no descontó una vida");
+            Debug.Log("SMOKE_DANIO_OK: una colisión lateral quitó una vida.");
             var pisada=enemigos[1];jugador.transform.position=pisada.transform.position+Vector3.up*.7f;rb.linearVelocity=Vector2.down;
             jugador.SendMessage("OnTriggerEnter2D",pisada.GetComponent<Collider2D>());
             if(EstadoPartidaNuevo.Puntos!=150)Fallar("pisar al enemigo no aplicó daño/puntos");
+            Debug.Log("SMOKE_PISOTON_OK: derrotar un enemigo sumó 150 puntos.");
             foreach(var gota in nectar)jugador.SendMessage("OnTriggerEnter2D",gota.GetComponent<Collider2D>());
             if(EstadoPartidaNuevo.Puntos!=650||EstadoPartidaNuevo.Nectar!=5)Fallar("el contador no coincide con recogidas y ataque");
+            Debug.Log("SMOKE_PUNTAJE_OK: cinco néctares más el pisotón sumaron 650 puntos.");
             if(System.Array.Exists(System.Environment.GetCommandLineArgs(),a=>a=="--smoke-test-death"))
             {EstadoPartidaNuevo.Herir();EstadoPartidaNuevo.Herir();}
             else{var meta=FindFirstObjectByType<MetaNuevo>();jugador.SendMessage("OnTriggerEnter2D",meta.GetComponent<Collider2D>());}
