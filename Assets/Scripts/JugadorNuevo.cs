@@ -11,6 +11,8 @@ public sealed class JugadorNuevo : MonoBehaviour
     void Update()
     {
         if(EstadoPartidaNuevo.Terminado)return;
+        if(Input.GetKeyDown(KeyCode.Escape))HUDNuevo.AlternarPausa();
+        if(HUDNuevo.Pausado)return;
         if(Input.GetKeyDown(KeyCode.F12))GuardarCaptura();
         float x=Input.GetAxisRaw("Horizontal"); rb.linearVelocity=new Vector2(x*velocidad,rb.linearVelocity.y);
         if(x!=0)sr.flipX=x<0;

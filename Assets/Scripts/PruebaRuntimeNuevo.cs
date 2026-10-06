@@ -39,6 +39,8 @@ public sealed class PruebaRuntimeNuevo:MonoBehaviour
             var enemigos=FindObjectsByType<EnemigoNuevo>(FindObjectsSortMode.None);
             var jugador=FindFirstObjectByType<JugadorNuevo>();
             if(nectar.Length!=5||enemigos.Length!=3||jugador==null||EstadoPartidaNuevo.Vidas!=3)Fallar($"nivel incompleto: néctar={nectar.Length}, enemigos={enemigos.Length}, jugadora={(jugador!=null)}, vidas={EstadoPartidaNuevo.Vidas}");
+            HUDNuevo.AlternarPausa();if(!HUDNuevo.Pausado||Time.timeScale!=0)Fallar("la tecla/función de pausa no congeló la partida");
+            HUDNuevo.AlternarPausa();if(HUDNuevo.Pausado||Time.timeScale!=1)Fallar("la partida no reanudó correctamente");
             var rb=jugador.GetComponent<Rigidbody2D>();var golpe=enemigos[0].GetComponent<Collider2D>();
             jugador.transform.position=new Vector3(enemigos[0].transform.position.x-.7f,enemigos[0].transform.position.y,0);rb.linearVelocity=Vector2.zero;
             jugador.SendMessage("OnTriggerEnter2D",golpe);

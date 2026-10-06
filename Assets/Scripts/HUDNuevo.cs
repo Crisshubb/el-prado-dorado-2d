@@ -6,10 +6,14 @@ public static class HUDNuevo
 {
     static Text estado;
     static Sprite botonSprite;
+    static Transform canvasPartida;
+    static GameObject pausaPanel;
+    public static bool Pausado { get; private set; }
     public static void Actualizar(){if(estado!=null)estado.text=$"NÉCTAR  {EstadoPartidaNuevo.Nectar}/{EstadoPartidaNuevo.TotalNectar}     PUNTOS  {EstadoPartidaNuevo.Puntos}     VIDAS  {new string('♥',Mathf.Max(0,EstadoPartidaNuevo.Vidas))}";}
     public static void CrearPartida()
     {
-        var c=CanvasNuevo();
+        Time.timeScale=1;Pausado=false;pausaPanel=null;
+        var c=CanvasNuevo();canvasPartida=c.transform;
         Panel(c.transform,new Vector2(.5f,1),new Vector2(0,-52),new Vector2(1330,78),new Color(.04f,.13f,.2f,.72f));
         Panel(c.transform,new Vector2(.5f,0),new Vector2(0,32),new Vector2(1330,54),new Color(.04f,.13f,.2f,.58f));
         estado=Texto(c.transform,"NÉCTAR  0     PUNTOS  0     VIDAS  ♥♥♥",28,new Vector2(.5f,1),new Vector2(0,-52),new Vector2(1100,62),TextAnchor.MiddleCenter,new Color(.98f,.9f,.64f));
@@ -18,6 +22,7 @@ public static class HUDNuevo
     }
     public static void CrearMenu(bool final)
     {
+        Time.timeScale=1;Pausado=false;pausaPanel=null;canvasPartida=null;
         var c=CanvasNuevo();
         Panel(c.transform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(840,620),new Color(.04f,.13f,.2f,.82f));
         if(!final)
@@ -36,6 +41,21 @@ public static class HUDNuevo
             Boton(c.transform,"JUGAR DE NUEVO",new Vector2(.5f,.4f),()=>{AudioJuegoNuevo.Instancia?.Boton();UnityEngine.SceneManagement.SceneManager.LoadScene("Pradera");});
             Boton(c.transform,"MENÚ PRINCIPAL",new Vector2(.5f,.28f),()=>{AudioJuegoNuevo.Instancia?.Boton();UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");});
         }
+    }
+    public static void AlternarPausa()
+    {
+        if(Pausado)
+        {
+            Time.timeScale=1;Pausado=false;
+            if(pausaPanel!=null)UnityEngine.Object.Destroy(pausaPanel);pausaPanel=null;return;
+        }
+        if(canvasPartida==null)return;
+        Pausado=true;Time.timeScale=0;
+        pausaPanel=new GameObject("Panel de pausa",typeof(RectTransform));pausaPanel.transform.SetParent(canvasPartida,false);
+        Panel(pausaPanel.transform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(560,350),new Color(.04f,.13f,.2f,.93f));
+        Texto(pausaPanel.transform,"PAUSA",46,new Vector2(.5f,.69f),Vector2.zero,new Vector2(500,84),TextAnchor.MiddleCenter,new Color(1,.82f,.22f));
+        Boton(pausaPanel.transform,"CONTINUAR",new Vector2(.5f,.48f),AlternarPausa);
+        Boton(pausaPanel.transform,"MENÚ PRINCIPAL",new Vector2(.5f,.27f),()=>{Time.timeScale=1;Pausado=false;UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");});
     }
     static Canvas CanvasNuevo(){var go=new GameObject("Interfaz",typeof(Canvas),typeof(CanvasScaler),typeof(GraphicRaycaster));var c=go.GetComponent<Canvas>();c.renderMode=RenderMode.ScreenSpaceOverlay;go.GetComponent<CanvasScaler>().uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;go.GetComponent<CanvasScaler>().referenceResolution=new Vector2(1920,1080);if(EventSystem.current==null)new GameObject("EventSystem",typeof(EventSystem),typeof(StandaloneInputModule));return c;}
     static void Panel(Transform parent,Vector2 anchor,Vector2 pos,Vector2 size,Color color){var go=new GameObject("Panel",typeof(RectTransform),typeof(Image));go.transform.SetParent(parent,false);var r=go.GetComponent<RectTransform>();r.anchorMin=r.anchorMax=anchor;r.anchoredPosition=pos;r.sizeDelta=size;go.GetComponent<Image>().color=color;}
