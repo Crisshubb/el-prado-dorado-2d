@@ -27,3 +27,8 @@ El código de `Assets/Scripts/InicializadorRuntimeNuevo.cs` construye cada escen
 - `Assets/Scripts/PruebaRuntimeNuevo.cs` permite automatizar comprobaciones de menú, pausa, daño, pisotón, contador, audio y resultado al ejecutar el build con `--smoke-test` o `--smoke-test-death`. `--captura-entrega` crea una captura del nivel durante la ejecución.
 
 El proyecto usa código y audio sintetizado propio; no depende de archivos externos de arte ni de audio.
+
+## Entregables generados
+
+- [ZIP completo del build Windows x64](Entregables/ElPradoDorado_Windows.zip).
+- [Captura completa del juego en ejecución](Entregables/Captura_Unity_Ejecucion.png).
