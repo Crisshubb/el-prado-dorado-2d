@@ -13,12 +13,26 @@ public static class GenerarProyectoNuevo
     [MenuItem("Entrega/Preparar juego nuevo")]
     public static void Preparar()
     {
+        ConfigurarSpritesPixelArt();
         Directory.CreateDirectory(Scenes);
         foreach(string nombre in Nombres)CrearEscena(nombre);
         EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(Scenes+"/Menu.unity",true),new EditorBuildSettingsScene(Scenes+"/Pradera.unity",true),new EditorBuildSettingsScene(Scenes+"/Final.unity",true)};
         PlayerSettings.productName="El Prado Dorado";PlayerSettings.companyName="Crisshubb";PlayerSettings.defaultScreenWidth=1280;PlayerSettings.defaultScreenHeight=720;PlayerSettings.fullScreenMode=FullScreenMode.Windowed;
         EditorSceneManager.OpenScene(Scenes+"/Menu.unity");
         Debug.Log("Proyecto preparado: escenas limpias Menu, Pradera y Final. El contenido se construye en runtime.");
+    }
+    static void ConfigurarSpritesPixelArt()
+    {
+        foreach(string guid in AssetDatabase.FindAssets("t:Texture2D",new[]{"Assets/Resources/Art"}))
+        {
+            string ruta=AssetDatabase.GUIDToAssetPath(guid);var importer=AssetImporter.GetAtPath(ruta) as TextureImporter;
+            if(importer==null)continue;
+            bool cambio=importer.textureType!=TextureImporterType.Sprite||importer.spritePixelsPerUnit!=64||importer.filterMode!=FilterMode.Point||importer.mipmapEnabled||importer.textureCompression!=TextureImporterCompression.Uncompressed||!importer.alphaIsTransparency;
+            if(!cambio)continue;
+            importer.textureType=TextureImporterType.Sprite;importer.spriteImportMode=SpriteImportMode.Single;importer.spritePixelsPerUnit=64;
+            importer.filterMode=FilterMode.Point;importer.mipmapEnabled=false;importer.textureCompression=TextureImporterCompression.Uncompressed;
+            importer.alphaIsTransparency=true;importer.wrapMode=TextureWrapMode.Clamp;importer.SaveAndReimport();
+        }
     }
     static void CrearEscena(string nombre)
     {EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);EditorSceneManager.SaveScene(SceneManager.GetActiveScene(),Scenes+"/"+nombre+".unity");}
